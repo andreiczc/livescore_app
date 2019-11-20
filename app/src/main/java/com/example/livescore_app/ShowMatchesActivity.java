@@ -109,9 +109,9 @@ public class ShowMatchesActivity extends AppCompatActivity {
             adapter = new MatchAdapter(matchList);
 
             TextView tvPlaceHolder = new TextView(this);
-            tvPlaceHolder.setText("Placeholder matches // No matches for the day");
-
-
+            tvPlaceHolder.setText("Placeholder matches \nNo matches for the day");
+            tvPlaceHolder.setTextSize(24);
+            layout.addView(tvPlaceHolder);
         }
 
         recyclerView.setLayoutManager(layoutManager);

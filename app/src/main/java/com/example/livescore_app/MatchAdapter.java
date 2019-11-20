@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         public TextView tvAWay;
         public TextView tvScore;
 
+        public View itemView;
+
 
         public MatchViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -35,6 +38,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             tvHome = itemView.findViewById(R.id.tvHome);
             tvAWay = itemView.findViewById(R.id.tvAway);
             tvScore = itemView.findViewById(R.id.tvScore);
+
+            this.itemView = itemView;
         }
     }
 
@@ -53,7 +58,14 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MatchViewHolder holder, int position) {
-        Match currentItem = matches.get(position);
+        final Match currentItem = matches.get(position);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.savedMatches.add(currentItem);
+            }
+        });
 
         holder.imageHome.setImageResource(R.drawable.ic_android);
         holder.imageAway.setImageResource(R.drawable.ic_android);
@@ -61,7 +73,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         holder.tvAWay.setText(currentItem.getAwayTeamName());
         holder.tvCompetitionName.setText(currentItem.getCompetitionName());
 
-        if(currentItem.isFinished() == true) {
+        if (currentItem.isFinished() == true) {
             holder.tvScore.setText(currentItem.getHomeTeamGoals() + " - " + currentItem.getAwayTeamGoals());
         } else {
             holder.tvDate.setText(currentItem.getEventDate());
