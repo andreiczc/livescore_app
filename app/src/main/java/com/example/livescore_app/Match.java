@@ -50,4 +50,40 @@ public class Match {
                 ", awayTeamCrest=" + awayTeamCrest +
                 '}';
     }
+
+    public String getCompetitionName() {
+        return competitionName;
+    }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public String getHomeTeamName() {
+        return homeTeamName;
+    }
+
+    public String getAwayTeamName() {
+        return awayTeamName;
+    }
+
+    public int getHomeTeamGoals() {
+        return homeTeamGoals;
+    }
+
+    public int getAwayTeamGoals() {
+        return awayTeamGoals;
+    }
+
+    public URL getHomeTeamCrest() {
+        return homeTeamCrest;
+    }
+
+    public URL getAwayTeamCrest() {
+        return awayTeamCrest;
+    }
 }

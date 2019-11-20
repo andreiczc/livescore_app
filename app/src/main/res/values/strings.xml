@@ -2,4 +2,6 @@
     <string name="app_name">LiveScore_app</string>
     <string name="show_matches">Show matches</string>
     <string name="saved_matches">Saved Matches</string>
+    <string name="away_team_crest">Away team crest</string>
+    <string name="home_team_crest">Home team crest</string>
 </resources>
