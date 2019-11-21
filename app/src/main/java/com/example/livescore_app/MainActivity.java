@@ -52,4 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
+
+    public void showMatchesByDate(View view) {
+        Intent intent = new Intent(this, ChooseDateActivity.class);
+
+        startActivity(intent);
+    }
 }

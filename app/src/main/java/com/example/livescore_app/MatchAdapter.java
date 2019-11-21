@@ -2,6 +2,7 @@ package com.example.livescore_app;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHolder> {
 
@@ -105,14 +108,36 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         if (currentItem.isFinished() == true) {
             holder.tvScore.setText(currentItem.getHomeTeamGoals() + " - " + currentItem.getAwayTeamGoals());
         } else {
-            holder.tvDate.setText(currentItem.getEventDate());
+            Date date = parseDate(currentItem.getEventDate());
 
-            // TODO parse date
+            int year = date.getYear() + 1900;
+            int month = date.getMonth() + 1;
+            String minutes = "";
+
+            if(date.getMinutes() == 0) {
+                minutes = "00";
+            } else {
+                minutes = Integer.toString(date.getMinutes());
+            }
+
+            holder.tvDate.setText(date.getDate() + "." + month + "." + year + " " + date.getHours() + ":" + minutes);
         }
     }
 
     @Override
     public int getItemCount() {
         return matches.size();
+    }
+
+    private Date parseDate(String original) {
+        Date date = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        try {
+            date = sdf.parse(original);
+        } catch(Exception e) {
+            Log.e("parseException", e.getMessage());
+        }
+
+        return date;
     }
 }

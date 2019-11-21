@@ -15,14 +15,23 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".ChooseDateActivity"
+            android:label="Choose date"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ShowMatchesByDateActivity"
+            android:label="Matches for selected days"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".SavedMatchesActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="Saved Matches"/>
+            android:label="Saved Matches"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ShowMatchesActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="Matches for today"/>
-        <activity android:name=".MainActivity"
+            android:label="Matches for today"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

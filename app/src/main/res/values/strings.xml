@@ -4,4 +4,8 @@
     <string name="saved_matches">Saved Matches</string>
     <string name="away_team_crest">Away team crest</string>
     <string name="home_team_crest">Home team crest</string>
+    <string name="filter_matches">Show matches by date</string>
+    <string name="set_from_date">Set from date</string>
+    <string name="set_to_date">Set to date</string>
+    <string name="show_results">Show results</string>
 </resources>
