@@ -86,8 +86,18 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             }
         });
 
-        holder.imageHome.setImageResource(R.drawable.ic_android);
-        holder.imageAway.setImageResource(R.drawable.ic_android);
+        if (currentItem.getHomeTeamCrest() != null) {
+            // extract img from url
+        } else {
+            holder.imageHome.setImageResource(R.mipmap.ic_ball);
+        }
+
+        if (currentItem.getAwayTeamCrest() != null) {
+            // extract img from url
+        } else {
+            holder.imageAway.setImageResource(R.mipmap.ic_ball);
+        }
+
         holder.tvHome.setText(currentItem.getHomeTeamName());
         holder.tvAWay.setText(currentItem.getAwayTeamName());
         holder.tvCompetitionName.setText(currentItem.getCompetitionName());
@@ -96,6 +106,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             holder.tvScore.setText(currentItem.getHomeTeamGoals() + " - " + currentItem.getAwayTeamGoals());
         } else {
             holder.tvDate.setText(currentItem.getEventDate());
+
+            //parseDate
         }
     }
 

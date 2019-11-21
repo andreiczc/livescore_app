@@ -11,10 +11,10 @@ public class Match {
     private String awayTeamName;
     private int homeTeamGoals;
     private int awayTeamGoals;
-    private URL homeTeamCrest;
-    private URL awayTeamCrest;
+    private String homeTeamCrest;
+    private String awayTeamCrest;
 
-    public Match(String competitionName, String eventDate, boolean finished, String homeTeamName, String awayTeamName, int homeTeamGoals, int awayTeamGoals, URL homeTeamCrest, URL awayTeamCrest) {
+    public Match(String competitionName, String eventDate, boolean finished, String homeTeamName, String awayTeamName, int homeTeamGoals, int awayTeamGoals, String homeTeamCrest, String awayTeamCrest) {
         this.competitionName = competitionName;
         this.eventDate = eventDate;
         this.finished = finished;
@@ -26,7 +26,7 @@ public class Match {
         this.awayTeamCrest = awayTeamCrest;
     }
 
-    public Match(String competitionName, String eventDate, boolean finished, String homeTeamName, String awayTeamName, URL homeTeamCrest, URL awayTeamCrest) {
+    public Match(String competitionName, String eventDate, boolean finished, String homeTeamName, String awayTeamName, String homeTeamCrest, String awayTeamCrest) {
         this.competitionName = competitionName;
         this.eventDate = eventDate;
         this.finished = finished;
@@ -79,11 +79,19 @@ public class Match {
         return awayTeamGoals;
     }
 
-    public URL getHomeTeamCrest() {
+    public String getHomeTeamCrest() {
         return homeTeamCrest;
     }
 
-    public URL getAwayTeamCrest() {
+    public String getAwayTeamCrest() {
         return awayTeamCrest;
+    }
+
+    public void setHomeTeamCrest(String homeTeamCrest) {
+        this.homeTeamCrest = homeTeamCrest;
+    }
+
+    public void setAwayTeamCrest(String awayTeamCrest) {
+        this.awayTeamCrest = awayTeamCrest;
     }
 }

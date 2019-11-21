@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             net = new Network();
             net.execute(new URL("http://api.football-data.org/v2/matches"));
+            //net.execute(new URL("https://api.football-data.org/v2/matches/?dateFrom=2019-11-17&dateTo=2019-11-21"));
         } catch (Exception e) {
             Log.e("errorNetwork", e.getMessage());
         }
