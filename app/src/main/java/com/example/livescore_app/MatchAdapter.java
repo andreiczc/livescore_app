@@ -107,7 +107,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         } else {
             holder.tvDate.setText(currentItem.getEventDate());
 
-            //parseDate
+            // TODO parse date
         }
     }
 
