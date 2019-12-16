@@ -1,20 +1,39 @@
 package com.example.livescore_app;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.net.URL;
 import java.util.Date;
 
+@Entity(tableName = "matches")
 public class Match {
+
+    @PrimaryKey(autoGenerate = true)
+    private int matchId;
+
     private String competitionName;
+
     private String eventDate;
+
     private boolean finished;
+
     private String homeTeamName;
+
     private String awayTeamName;
+
     private int homeTeamGoals;
+
     private int awayTeamGoals;
+
     private String homeTeamCrest;
+
     private String awayTeamCrest;
 
-    public Match(String competitionName, String eventDate, boolean finished, String homeTeamName, String awayTeamName, int homeTeamGoals, int awayTeamGoals, String homeTeamCrest, String awayTeamCrest) {
+    public Match(String competitionName, String eventDate, boolean finished, String homeTeamName,
+                 String awayTeamName, int homeTeamGoals, int awayTeamGoals, String homeTeamCrest, String awayTeamCrest) {
         this.competitionName = competitionName;
         this.eventDate = eventDate;
         this.finished = finished;
@@ -26,6 +45,7 @@ public class Match {
         this.awayTeamCrest = awayTeamCrest;
     }
 
+    @Ignore
     public Match(String competitionName, String eventDate, boolean finished, String homeTeamName, String awayTeamName, String homeTeamCrest, String awayTeamCrest) {
         this.competitionName = competitionName;
         this.eventDate = eventDate;
@@ -36,6 +56,7 @@ public class Match {
         this.awayTeamCrest = awayTeamCrest;
     }
 
+    @Ignore
     @Override
     public String toString() {
         return "Match{" +
@@ -49,6 +70,10 @@ public class Match {
                 ", homeTeamCrest=" + homeTeamCrest +
                 ", awayTeamCrest=" + awayTeamCrest +
                 '}';
+    }
+
+    public int getMatchId() {
+        return matchId;
     }
 
     public String getCompetitionName() {
@@ -85,6 +110,38 @@ public class Match {
 
     public String getAwayTeamCrest() {
         return awayTeamCrest;
+    }
+
+    public void setMatchId(int matchId) {
+        this.matchId = matchId;
+    }
+
+    public void setCompetitionName(String competitionName) {
+        this.competitionName = competitionName;
+    }
+
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public void setHomeTeamName(String homeTeamName) {
+        this.homeTeamName = homeTeamName;
+    }
+
+    public void setAwayTeamName(String awayTeamName) {
+        this.awayTeamName = awayTeamName;
+    }
+
+    public void setHomeTeamGoals(int homeTeamGoals) {
+        this.homeTeamGoals = homeTeamGoals;
+    }
+
+    public void setAwayTeamGoals(int awayTeamGoals) {
+        this.awayTeamGoals = awayTeamGoals;
     }
 
     public void setHomeTeamCrest(String homeTeamCrest) {

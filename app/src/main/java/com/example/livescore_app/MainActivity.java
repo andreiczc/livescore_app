@@ -37,12 +37,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private Network net;
     public static List<Match> savedMatches = null;
+    private DatabaseInstance database;
 
     public static final int SharedPrefs = 1;
     public static final int DB = 2;
     public static final int Text = 3;
     public static final int ClearSharedPrefs = 4;
     public static final int ShowText = 5;
+    public static final int ShowDB = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +55,11 @@ public class MainActivity extends AppCompatActivity {
             readMatchesPreferences("matches");
         }
 
+        database = DatabaseInstance.getDatabaseInstance(this);
+
         try {
             net = new Network();
             net.execute(new URL("http://api.football-data.org/v2/matches"));
-            //net.execute(new URL("https://api.football-data.org/v2/matches/?dateFrom=2019-11-17&dateTo=2019-11-21"));
         } catch (Exception e) {
             Log.e("errorNetwork", e.getMessage());
         }
@@ -85,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, SharedPrefs, 1, "Save matches with shared preferences");
         menu.add(0, ClearSharedPrefs, 1, "Clear matches from preference");
-        menu.add(0, DB, 3, "DB options ?");
-        menu.add(0, Text, 4, "Save matches with text file");
-        menu.add(0, ShowText, 5, "Show matches with text file");
+        menu.add(0, DB, 3, "Save matches to database");
+        menu.add(0, ShowDB, 4, "Show matches saved in the database");
+        menu.add(0, Text, 5, "Save matches with text file");
+        menu.add(0, ShowText, 6, "Show matches with text file");
 
         return true;
     }
@@ -99,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 saveMatchesPreferences(savedMatches);
                 break;
             case DB:
+                saveMatchesDatabase();
                 break;
             case Text:
                 try {
@@ -140,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
         editor.putInt("noMatches", matches.size());
 
         editor.apply();
+
+        Toast.makeText(this, "Matches successfully saved", Toast.LENGTH_LONG).show();
     }
 
     private void readMatchesPreferences(String prefName) {
@@ -192,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
         out.flush();
 
         file.close();
+
+        Toast.makeText(this, "Matches successfully saved to file", Toast.LENGTH_LONG).show();
     }
 
     private void readFromText(String fileName) throws IOException {
@@ -223,4 +232,13 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    private void saveMatchesDatabase() {
+        for(int i = 0; i < savedMatches.size(); i++)
+            database.matchDao().insertMatch(savedMatches.get(i));
+
+        Toast.makeText(this, "Matches successfully saved to database", Toast.LENGTH_LONG).show();
+    }
+
+
 }
