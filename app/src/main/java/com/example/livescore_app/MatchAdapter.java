@@ -1,6 +1,9 @@
 package com.example.livescore_app;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import java.util.Date;
 public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHolder> {
 
     private ArrayList<Match> matches;
+    private String activityName;
 
     public static class MatchViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageHome;
@@ -68,14 +72,31 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ActivityManager am = (ActivityManager) view.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+                ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+                activityName = cn.toShortString();
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setTitle("Do you want to save this match ?");
+
+                if(activityName.contains("ShowMatchesActivity"))
+                    builder.setTitle("Do you want to save this match ?");
+                else if(activityName.contains("SavedMatchesActivity"))
+                    builder.setTitle("Do you want to delete this match ?");
+
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.savedMatches.add(currentItem);
+                        if(activityName.contains("ShowMatchesActivity")) {
+                            long id = MainActivity.database.matchDao().insertMatch(currentItem);
+                            currentItem.setMatchId((int) id);
+                            MainActivity.savedMatches.add(currentItem);
+                        } else if(activityName.contains("SavedMatchesActivity")) {
+                            MainActivity.savedMatches.remove(currentItem);
+                            MainActivity.database.matchDao().deleteMatch(currentItem);
+                        }
                     }
                 });
+
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -83,9 +104,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                     }
                 });
 
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
+                builder.create().show();
             }
         });
 

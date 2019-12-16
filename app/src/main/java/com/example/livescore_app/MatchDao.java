@@ -15,7 +15,7 @@ public interface MatchDao {
     List<Match> getAll();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertMatch(Match match);
+    long insertMatch(Match match);
 
     @Delete
     void deleteMatch(Match match);

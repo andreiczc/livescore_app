@@ -72,6 +72,22 @@ public class Match {
                 '}';
     }
 
+    @Ignore
+    public String toStringR() {
+        String res = "Match: \n" +
+                "CompetitionName: " + competitionName + '\n' +
+                "EventDate: " + eventDate + '\n' +
+                "Finished: " + finished + '\n' +
+                "Home team name: " + homeTeamName + '\n' +
+                "Away team name: " + awayTeamName + '\n';
+
+        if(isFinished())
+            res += "Home team goals: " + homeTeamGoals + '\n' +
+                    "Away team goals: " + awayTeamGoals + '\n';
+
+        return res;
+    }
+
     public int getMatchId() {
         return matchId;
     }

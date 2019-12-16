@@ -37,7 +37,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private Network net;
     public static List<Match> savedMatches = null;
-    private DatabaseInstance database;
+    public static DatabaseInstance database;
 
     public static final int SharedPrefs = 1;
     public static final int DB = 2;
@@ -121,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                break;
+            case ShowDB:
+                showMatchesDb();
                 break;
         }
 
@@ -240,5 +243,24 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Matches successfully saved to database", Toast.LENGTH_LONG).show();
     }
 
+    private void showMatchesDb() {
+        StringBuilder res = new StringBuilder("");
+        List<Match> temp = database.matchDao().getAll();
 
+        for(int i = 0; i < temp.size(); i++) {
+            res.append(temp.get(i).toStringR() + "\n\n");
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(res)
+                .setTitle("Matches saved in DB")
+                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+        builder.create().show();
+    }
 }
