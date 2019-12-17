@@ -298,6 +298,11 @@ public class MainActivity extends AppCompatActivity {
             res.append("Total Goals: " + totalGoals + "\nAverage no of goals per game: " + avgGoals + "\nNo of goals for a home team: "
                     + homeTeamGoals + "\nNo of goals for an away team: " + awayTeamGoals + "\nNo of times the home team won: " +
                     timesHomeWin + "\nNo of times the away team won: " + timesAwayWin + "\nNo of times tied: " + timesTie + "\n\n");
+
+            res.append("Matches saved: \n\n");
+            for(Match m : temp) {
+                res.append(m.toStringR() + "\n\n");
+            }
         }
 
         return res.toString();
