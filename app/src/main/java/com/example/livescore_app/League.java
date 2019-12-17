@@ -1,29 +1,28 @@
 package com.example.livescore_app;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity
+import java.util.List;
+
+@Entity(tableName = "leagues")
 public class League {
 
-    @PrimaryKey(autoGenerate = true)
-    private int leagueId;
+    @NonNull
+    @PrimaryKey
+    public String leagueName;
 
-    private String leagueName;
+    @Ignore
+    List<Match> matches;
 
-    public int getLeagueId() {
-        return leagueId;
-    }
+    @Ignore
+    DatabaseInstance database;
 
-    public void setLeagueId(int leagueId) {
-        this.leagueId = leagueId;
-    }
-
-    public String getLeagueName() {
-        return leagueName;
-    }
-
-    public void setLeagueName(String leagueName) {
+    public League(@NonNull String leagueName) {
         this.leagueName = leagueName;
+
+        //matches = database.dbDao().getAllMatchesForLeague(leagueName);
     }
 }

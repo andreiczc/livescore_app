@@ -87,12 +87,12 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (activityName.contains("ShowMatchesActivity") || activityName.contains("ShowMatchesByDateActivity")) {
-                            long id = MainActivity.database.matchDao().insertMatch(currentItem);
+                            long id = MainActivity.database.dbDao().insertMatch(currentItem);
                             currentItem.setMatchId((int) id);
                             MainActivity.savedMatches.add(currentItem);
                         } else if (activityName.contains("SavedMatchesActivity")) {
                             MainActivity.savedMatches.remove(currentItem);
-                            MainActivity.database.matchDao().deleteMatch(currentItem);
+                            MainActivity.database.dbDao().deleteMatch(currentItem);
                             notifyItemRemoved(position);
                         }
                     }

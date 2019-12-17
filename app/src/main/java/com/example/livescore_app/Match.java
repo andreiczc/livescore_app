@@ -32,6 +32,8 @@ public class Match {
 
     private String awayTeamCrest;
 
+    private String leagueName;
+
     public Match(String competitionName, String eventDate, boolean finished, String homeTeamName,
                  String awayTeamName, int homeTeamGoals, int awayTeamGoals, String homeTeamCrest, String awayTeamCrest) {
         this.competitionName = competitionName;
@@ -75,8 +77,8 @@ public class Match {
     @Ignore
     public String toStringR() {
         String res = "Match: \n" +
-                "CompetitionName: " + competitionName + '\n' +
-                "EventDate: " + eventDate + '\n' +
+                "Competition name: " + competitionName + '\n' +
+                "Event date: " + eventDate + '\n' +
                 "Finished: " + finished + '\n' +
                 "Home team name: " + homeTeamName + '\n' +
                 "Away team name: " + awayTeamName + '\n';
@@ -86,6 +88,14 @@ public class Match {
                     "Away team goals: " + awayTeamGoals + '\n';
 
         return res;
+    }
+
+    public String getLeagueName() {
+        return leagueName;
+    }
+
+    public void setLeagueName(String leagueName) {
+        this.leagueName = leagueName;
     }
 
     public int getMatchId() {

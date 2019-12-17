@@ -5,32 +5,22 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import org.json.JSONObject;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,10 +116,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case ShowDB:
-                showMatchesDb();
+                try {
+                    showMatchesDb();
+                } catch (Exception e) {
+                    Log.e("DBerror", e.getMessage());
+                }
                 break;
             case ClearDB:
-                database.matchDao().deleteAllMatches();
+                database.dbDao().deleteAllMatches();
                 Toast.makeText(this, "Matches successfully deleted", Toast.LENGTH_LONG).show();
                 break;
         }
@@ -247,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveMatchesDatabase() {
         for (int i = 0; i < savedMatches.size(); i++)
-            database.matchDao().insertMatch(savedMatches.get(i));
+            database.dbDao().insertMatch(savedMatches.get(i));
 
         Toast.makeText(this, "Matches successfully saved to database", Toast.LENGTH_LONG).show();
     }
@@ -261,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String createReport() {
-        List<Match> temp = database.matchDao().getAll();
+        List<Match> temp = database.dbDao().getMatches();
         StringBuilder res = new StringBuilder("");
         double avgGoals = 0;
         int totalGoals = 0;
@@ -292,12 +286,13 @@ public class MainActivity extends AppCompatActivity {
         totalGoals = homeTeamGoals + awayTeamGoals;
 
         res.append("No matches: " + noMatches + "\n\n");
-        if (noMatches != 0 && noFinished != 0) {
-            avgGoals = totalGoals / noMatches;
-
-            res.append("Total Goals: " + totalGoals + "\nAverage no of goals per game: " + avgGoals + "\nNo of goals for a home team: "
-                    + homeTeamGoals + "\nNo of goals for an away team: " + awayTeamGoals + "\nNo of times the home team won: " +
-                    timesHomeWin + "\nNo of times the away team won: " + timesAwayWin + "\nNo of times tied: " + timesTie + "\n\n");
+        if (noMatches != 0) {
+            if(noFinished != 0) {
+                avgGoals = totalGoals / noMatches;
+                res.append("Total Goals: " + totalGoals + "\nAverage no of goals per game: " + avgGoals + "\nNo of goals for a home team: "
+                        + homeTeamGoals + "\nNo of goals for an away team: " + awayTeamGoals + "\nNo of times the home team won: " +
+                        timesHomeWin + "\nNo of times the away team won: " + timesAwayWin + "\nNo of times tied: " + timesTie + "\n\n");
+            }
 
             res.append("Matches saved: \n\n");
             for(Match m : temp) {
