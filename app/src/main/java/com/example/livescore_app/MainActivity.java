@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int ClearSharedPrefs = 4;
     public static final int ShowText = 5;
     public static final int ShowDB = 6;
+    public static final int ClearDB = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +91,9 @@ public class MainActivity extends AppCompatActivity {
         menu.add(0, ClearSharedPrefs, 1, "Clear matches from preference");
         menu.add(0, DB, 3, "Save matches to database");
         menu.add(0, ShowDB, 4, "Show matches saved in the database");
-        menu.add(0, Text, 5, "Save matches with text file");
-        menu.add(0, ShowText, 6, "Show matches with text file");
+        menu.add(0, ClearDB, 5, "Delete all saved matches from db");
+        menu.add(0, Text, 6, "Save matches with text file");
+        menu.add(0, ShowText, 7, "Show matches with text file");
 
         return true;
     }
@@ -124,6 +126,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case ShowDB:
                 showMatchesDb();
+                break;
+            case ClearDB:
+                database.matchDao().deleteAllMatches();
+                Toast.makeText(this, "Matches successfully deleted", Toast.LENGTH_LONG).show();
                 break;
         }
 

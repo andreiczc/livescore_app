@@ -19,4 +19,7 @@ public interface MatchDao {
 
     @Delete
     void deleteMatch(Match match);
+
+    @Query("delete from matches")
+    void deleteAllMatches();
 }

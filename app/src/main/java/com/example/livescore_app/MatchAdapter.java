@@ -66,7 +66,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MatchViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MatchViewHolder holder, final int position) {
         final Match currentItem = matches.get(position);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +93,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                         } else if(activityName.contains("SavedMatchesActivity")) {
                             MainActivity.savedMatches.remove(currentItem);
                             MainActivity.database.matchDao().deleteMatch(currentItem);
+                            notifyItemRemoved(position);
                         }
                     }
                 });
