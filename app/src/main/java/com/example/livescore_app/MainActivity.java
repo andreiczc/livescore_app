@@ -3,6 +3,7 @@ package com.example.livescore_app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(savedMatches == null) {
+        if (savedMatches == null) {
             readMatchesPreferences("matches");
         }
 
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case SharedPrefs:
                 saveMatchesPreferences(savedMatches);
                 break;
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences("matches", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
-        for(int i = 0; i < matches.size(); i++) {
+        for (int i = 0; i < matches.size(); i++) {
             Match curr = matches.get(i);
 
             editor.putString("competitionName" + i, curr.getCompetitionName());
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("homeTeamName" + i, curr.getHomeTeamName());
             editor.putString("awayTeamName" + i, curr.getAwayTeamName());
             editor.putInt("homeTeamGoals" + i, curr.getHomeTeamGoals());
-            editor.putInt("awayTeamGoals" + i,curr.getAwayTeamGoals());
+            editor.putInt("awayTeamGoals" + i, curr.getAwayTeamGoals());
         }
         editor.putInt("noMatches", matches.size());
 
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<Match> temp = new ArrayList<>();
 
-        for(int i = 0; i < noMatches; i++) {
+        for (int i = 0; i < noMatches; i++) {
             Match curr = new Match(
                     settings.getString("competitionName" + i, "blank"),
                     settings.getString("eventDate" + i, "blank"),
@@ -187,14 +188,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
         editor.clear();
         editor.apply();
+
+        Toast.makeText(this, "Preferences successfully cleared", Toast.LENGTH_LONG).show();
     }
 
     private void writeToText(String fileName) throws IOException {
         FileOutputStream file = openFileOutput(fileName, MODE_PRIVATE);
         DataOutputStream out = new DataOutputStream(file);
 
-        out.writeUTF( "No of saved matches: " + savedMatches.size() + "\n\n");
-        for(int i = 0; i < savedMatches.size(); i++) {
+        out.writeUTF("No of saved matches: " + savedMatches.size() + "\n\n");
+        for (int i = 0; i < savedMatches.size(); i++) {
             Match curr = savedMatches.get(i);
 
             out.writeUTF("Competition name: " + curr.getCompetitionName() + "\n");
@@ -220,11 +223,11 @@ public class MainActivity extends AppCompatActivity {
         String line = in.readUTF();
 
         try {
-            while(true) {
+            while (true) {
                 res.append(line);
                 line = in.readUTF();
             }
-        } catch(EOFException e) {
+        } catch (EOFException e) {
 
         }
 
@@ -243,30 +246,60 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveMatchesDatabase() {
-        for(int i = 0; i < savedMatches.size(); i++)
+        for (int i = 0; i < savedMatches.size(); i++)
             database.matchDao().insertMatch(savedMatches.get(i));
 
         Toast.makeText(this, "Matches successfully saved to database", Toast.LENGTH_LONG).show();
     }
 
     private void showMatchesDb() {
-        StringBuilder res = new StringBuilder("");
-        List<Match> temp = database.matchDao().getAll();
+        String report = createReport();
 
-        for(int i = 0; i < temp.size(); i++) {
-            res.append(temp.get(i).toStringR() + "\n\n");
+        FragmentManager fm = getSupportFragmentManager();
+        MyDialogFragment dialog = MyDialogFragment.newInstance(report);
+        dialog.show(fm, "fragment_dialog_db");
+    }
+
+    private String createReport() {
+        List<Match> temp = database.matchDao().getAll();
+        StringBuilder res = new StringBuilder("");
+        double avgGoals = 0;
+        int totalGoals = 0;
+        int homeTeamGoals = 0;
+        int awayTeamGoals = 0;
+        int noMatches = temp.size();
+        int timesTie = 0;
+        int timesHomeWin = 0;
+        int timesAwayWin = 0;
+        int noFinished = 0;
+
+        for (Match m : temp) {
+            if (m.isFinished()) {
+                homeTeamGoals += m.getHomeTeamGoals();
+                awayTeamGoals += m.getAwayTeamGoals();
+                noFinished++;
+
+                if (m.getHomeTeamGoals() > m.getAwayTeamGoals()) {
+                    timesHomeWin++;
+                } else if (m.getHomeTeamGoals() == m.getAwayTeamGoals()) {
+                    timesTie++;
+                } else {
+                    timesAwayWin++;
+                }
+            }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(res)
-                .setTitle("Matches saved in DB")
-                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
+        totalGoals = homeTeamGoals + awayTeamGoals;
 
-        builder.create().show();
+        res.append("No matches: " + noMatches + "\n\n");
+        if (noMatches != 0 && noFinished != 0) {
+            avgGoals = totalGoals / noMatches;
+
+            res.append("Total Goals: " + totalGoals + "\nAverage no of goals per game: " + avgGoals + "\nNo of goals for a home team: "
+                    + homeTeamGoals + "\nNo of goals for an away team: " + awayTeamGoals + "\nNo of times the home team won: " +
+                    timesHomeWin + "\nNo of times the away team won: " + timesAwayWin + "\nNo of times tied: " + timesTie + "\n\n");
+        }
+
+        return res.toString();
     }
 }

@@ -78,19 +78,19 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
 
-                if(activityName.contains("ShowMatchesActivity"))
+                if (activityName.contains("ShowMatchesActivity") || activityName.contains("ShowMatchesByDateActivity"))
                     builder.setTitle("Do you want to save this match ?");
-                else if(activityName.contains("SavedMatchesActivity"))
+                else if (activityName.contains("SavedMatchesActivity"))
                     builder.setTitle("Do you want to delete this match ?");
 
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(activityName.contains("ShowMatchesActivity")) {
+                        if (activityName.contains("ShowMatchesActivity") || activityName.contains("ShowMatchesByDateActivity")) {
                             long id = MainActivity.database.matchDao().insertMatch(currentItem);
                             currentItem.setMatchId((int) id);
                             MainActivity.savedMatches.add(currentItem);
-                        } else if(activityName.contains("SavedMatchesActivity")) {
+                        } else if (activityName.contains("SavedMatchesActivity")) {
                             MainActivity.savedMatches.remove(currentItem);
                             MainActivity.database.matchDao().deleteMatch(currentItem);
                             notifyItemRemoved(position);
@@ -134,7 +134,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             int month = date.getMonth() + 1;
             String minutes = "";
 
-            if(date.getMinutes() == 0) {
+            if (date.getMinutes() == 0) {
                 minutes = "00";
             } else {
                 minutes = Integer.toString(date.getMinutes());
@@ -154,7 +154,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         try {
             date = sdf.parse(original);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e("parseException", e.getMessage());
         }
 
