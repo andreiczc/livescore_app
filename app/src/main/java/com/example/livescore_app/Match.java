@@ -2,13 +2,14 @@ package com.example.livescore_app;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.net.URL;
 import java.util.Date;
 
-@Entity(tableName = "matches")
+@Entity(tableName = "matches", foreignKeys = @ForeignKey(entity = League.class, parentColumns = "leagueName", childColumns = "leagueName", onDelete = ForeignKey.CASCADE))
 public class Match {
 
     @PrimaryKey(autoGenerate = true)
@@ -45,6 +46,8 @@ public class Match {
         this.awayTeamGoals = awayTeamGoals;
         this.homeTeamCrest = homeTeamCrest;
         this.awayTeamCrest = awayTeamCrest;
+
+        leagueName = competitionName;
     }
 
     @Ignore
@@ -56,6 +59,8 @@ public class Match {
         this.awayTeamName = awayTeamName;
         this.homeTeamCrest = homeTeamCrest;
         this.awayTeamCrest = awayTeamCrest;
+
+        leagueName = competitionName;
     }
 
     @Ignore

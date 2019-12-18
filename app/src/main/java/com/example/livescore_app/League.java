@@ -17,12 +17,9 @@ public class League {
     @Ignore
     List<Match> matches;
 
-    @Ignore
-    DatabaseInstance database;
-
     public League(@NonNull String leagueName) {
         this.leagueName = leagueName;
 
-        //matches = database.dbDao().getAllMatchesForLeague(leagueName);
+        matches = MainActivity.database.dbDao().getAllMatchesForLeague(leagueName);
     }
 }

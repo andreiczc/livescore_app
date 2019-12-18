@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Network net;
     public static List<Match> savedMatches = null;
     public static DatabaseInstance database;
+    public static DbDao publicDao;
 
     public static final int SharedPrefs = 1;
     public static final int DB = 2;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         database = DatabaseInstance.getDatabaseInstance(this);
+        publicDao = database.dbDao();
 
         try {
             net = new Network();
@@ -116,15 +118,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case ShowDB:
-                try {
-                    showMatchesDb();
-                } catch (Exception e) {
-                    Log.e("DBerror", e.getMessage());
-                }
+                showMatchesDb();
                 break;
             case ClearDB:
                 database.dbDao().deleteAllMatches();
-                Toast.makeText(this, "Matches successfully deleted", Toast.LENGTH_LONG).show();
+                database.dbDao().deleteAllLeagues();
+                Toast.makeText(this, "Database successfully cleared", Toast.LENGTH_LONG).show();
                 break;
         }
 
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
 
         res.append("No matches: " + noMatches + "\n\n");
         if (noMatches != 0) {
-            if(noFinished != 0) {
+            if (noFinished != 0) {
                 avgGoals = totalGoals / noMatches;
                 res.append("Total Goals: " + totalGoals + "\nAverage no of goals per game: " + avgGoals + "\nNo of goals for a home team: "
                         + homeTeamGoals + "\nNo of goals for an away team: " + awayTeamGoals + "\nNo of times the home team won: " +
@@ -295,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             res.append("Matches saved: \n\n");
-            for(Match m : temp) {
+            for (Match m : temp) {
                 res.append(m.toStringR() + "\n\n");
             }
         }

@@ -87,6 +87,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (activityName.contains("ShowMatchesActivity") || activityName.contains("ShowMatchesByDateActivity")) {
+                            MainActivity.publicDao.insertLeague(new League(currentItem.getCompetitionName()));
                             long id = MainActivity.database.dbDao().insertMatch(currentItem);
                             currentItem.setMatchId((int) id);
                             MainActivity.savedMatches.add(currentItem);
