@@ -10,7 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,8 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyDialogFragment extends DialogFragment {
     private TextView tvContent;
@@ -89,23 +94,59 @@ public class MyDialogFragment extends DialogFragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                 LayoutInflater inflater = getLayoutInflater();
                 View myView = inflater.inflate(R.layout.dialog_modify, null);
-                EditText tvHomeTeam = myView.findViewById(R.id.homeTeamName);
-                EditText tvAwayTeam = myView.findViewById(R.id.awayTeamName);
 
+                final Spinner teamSpinner = myView.findViewById(R.id.spinnerTeam);
+                List<String> spinnerValues = new ArrayList<>();
+                for (Match m : MainActivity.savedMatches) {
+                    spinnerValues.add(m.getMatchId() + ". " + m.getHomeTeamName() + " - " + m.getAwayTeamName());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), android.R.layout.simple_spinner_item, spinnerValues);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                teamSpinner.setAdapter(adapter);
+
+                final EditText tvHomeTeam = myView.findViewById(R.id.homeTeamName);
+                final EditText tvAwayTeam = myView.findViewById(R.id.awayTeamName);
                 tvHomeTeam.setText(MainActivity.savedMatches.get(0).getHomeTeamName());
                 tvAwayTeam.setText(MainActivity.savedMatches.get(0).getAwayTeamName());
+
+                teamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (!tvHomeTeam.getText().toString().equalsIgnoreCase(MainActivity.savedMatches.get(position).getHomeTeamName())) {
+                            tvHomeTeam.setText(MainActivity.savedMatches.get(position).getHomeTeamName());
+                            tvAwayTeam.setText(MainActivity.savedMatches.get(position).getAwayTeamName());
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
 
                 builder.setView(myView)
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                char id = teamSpinner.getSelectedItem().toString().toCharArray()[0];
+                                int idd = Character.getNumericValue(id);
+                                MainActivity.database.dbDao().updateMatch(tvHomeTeam.getText().toString(), tvAwayTeam.getText().toString(), idd);
 
+                                for(Match m : MainActivity.savedMatches) {
+                                    if(m.getMatchId() == idd) {
+                                        m.setHomeTeamName(tvHomeTeam.getText().toString());
+                                        m.setAwayTeamName(tvAwayTeam.getText().toString());
+                                    }
+                                }
+
+                                Toast.makeText(getContext(), "Database update successfull", Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                dialog.dismiss();
                             }
                         });
 

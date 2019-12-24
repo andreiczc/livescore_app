@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private Network net;
     public static List<Match> savedMatches = null;
     public static DatabaseInstance database;
-    public static DbDao publicDao;
 
     public static final int SharedPrefs = 1;
     public static final int DB = 2;
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         database = DatabaseInstance.getDatabaseInstance(this);
-        publicDao = database.dbDao();
 
         if (savedMatches == null) {
             //readMatchesPreferences("matches");

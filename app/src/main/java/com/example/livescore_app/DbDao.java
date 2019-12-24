@@ -24,7 +24,6 @@ public interface DbDao {
     void deleteAllMatches();
 
 
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertLeague(League league);
 
@@ -39,4 +38,7 @@ public interface DbDao {
 
     @Query("select* from matches where leagueName LIKE :leagueName")
     List<Match> getAllMatchesForLeague(String leagueName);
+
+    @Query("update matches set homeTeamName = :homeTeamName, awayTeamName = :awayTeamName where matchId = :matchId")
+    void updateMatch(String homeTeamName, String awayTeamName, int matchId);
 }
