@@ -87,7 +87,7 @@ public class ChooseDateActivity extends AppCompatActivity {
     public void setDateTo(View view) {
         int month = datePicker.getMonth() + 1;
         toDate = datePicker.getYear() + "-" + month + "-" + datePicker.getDayOfMonth();
-        tvTo.setText("From date: " + datePicker.getDayOfMonth() + " " + getMonthFullName(datePicker.getMonth()));
+        tvTo.setText("To date: " + datePicker.getDayOfMonth() + " " + getMonthFullName(datePicker.getMonth()));
     }
 
     private String getMonthFullName(int monthNumber) {

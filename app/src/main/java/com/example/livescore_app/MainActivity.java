@@ -38,18 +38,20 @@ public class MainActivity extends AppCompatActivity {
     public static final int ShowText = 5;
     public static final int ShowDB = 6;
     public static final int ClearDB = 7;
+    public static final int ShowMatchesByLeagueDB = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedMatches == null) {
-            readMatchesPreferences("matches");
-        }
-
         database = DatabaseInstance.getDatabaseInstance(this);
         publicDao = database.dbDao();
+
+        if (savedMatches == null) {
+            //readMatchesPreferences("matches");
+            savedMatches = database.dbDao().getMatches();
+        }
 
         try {
             net = new Network();
@@ -84,9 +86,10 @@ public class MainActivity extends AppCompatActivity {
         menu.add(0, ClearSharedPrefs, 1, "Clear matches from preference");
         menu.add(0, DB, 3, "Save matches to database");
         menu.add(0, ShowDB, 4, "Show matches saved in the database");
-        menu.add(0, ClearDB, 5, "Delete all saved matches from db");
-        menu.add(0, Text, 6, "Save matches with text file");
-        menu.add(0, ShowText, 7, "Show matches with text file");
+        menu.add(0, ShowMatchesByLeagueDB, 5, "Show matches by league");
+        menu.add(0, ClearDB, 6, "Delete all saved matches from db");
+        menu.add(0, Text, 7, "Save matches with text file");
+        menu.add(0, ShowText, 8, "Show matches with text file");
 
         return true;
     }
@@ -124,6 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 database.dbDao().deleteAllMatches();
                 database.dbDao().deleteAllLeagues();
                 Toast.makeText(this, "Database successfully cleared", Toast.LENGTH_LONG).show();
+                break;
+            case ShowMatchesByLeagueDB:
+                showMatchesByLeagueDb();
                 break;
         }
 
@@ -246,15 +252,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMatchesDb() {
-        String report = createReport();
+        List<Match> temp = database.dbDao().getMatches();
+        String report = createReport(temp);
 
         FragmentManager fm = getSupportFragmentManager();
         MyDialogFragment dialog = MyDialogFragment.newInstance(report);
         dialog.show(fm, "fragment_dialog_db");
     }
 
-    private String createReport() {
-        List<Match> temp = database.dbDao().getMatches();
+    private void showMatchesByLeagueDb() {
+        String report = createReportByLeague();
+
+        FragmentManager fm = getSupportFragmentManager();
+        MyDialogFragment dialog = MyDialogFragment.newInstance(report);
+        dialog.show(fm, "fragment_dialog_league");
+    }
+
+    private String createReportByLeague() {
+        StringBuilder res = new StringBuilder("");
+        List<League> leagues = database.dbDao().getLeagues();
+        for (League l : leagues) {
+            res.append(l.leagueName + "\n\n" + "Matches: \n");
+            for (Match m : l.matches) {
+                res.append(m.toStringR() + "\n\n");
+            }
+            res.append("\n");
+        }
+
+        return res.toString();
+    }
+
+    private String createReport(List<Match> temp) {
         StringBuilder res = new StringBuilder("");
         double avgGoals = 0;
         int totalGoals = 0;

@@ -8,4 +8,7 @@
     <string name="set_from_date">Set from date</string>
     <string name="set_to_date">Set to date</string>
     <string name="show_results">Show results</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="save_report">Save report</string>
+    <string name="modify">Modify</string>
 </resources>

@@ -46,7 +46,8 @@ public class ShowMatchesActivity extends AppCompatActivity {
 
         matches = parseJson(matchesJson);
 
-        populateRecyclerView();
+        if(matches.size() != 0)
+            populateRecyclerView();
     }
 
     private ArrayList<Match> parseJson(JSONObject obj) {

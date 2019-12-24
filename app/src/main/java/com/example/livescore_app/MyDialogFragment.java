@@ -3,12 +3,14 @@ package com.example.livescore_app;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +80,36 @@ public class MyDialogFragment extends DialogFragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        view.findViewById(R.id.btnModify).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                LayoutInflater inflater = getLayoutInflater();
+                View myView = inflater.inflate(R.layout.dialog_modify, null);
+                EditText tvHomeTeam = myView.findViewById(R.id.homeTeamName);
+                EditText tvAwayTeam = myView.findViewById(R.id.awayTeamName);
+
+                tvHomeTeam.setText(MainActivity.savedMatches.get(0).getHomeTeamName());
+                tvAwayTeam.setText(MainActivity.savedMatches.get(0).getAwayTeamName());
+
+                builder.setView(myView)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                builder.create().show();
             }
         });
     }
