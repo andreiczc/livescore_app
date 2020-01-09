@@ -15,6 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -39,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
     public static final int ClearDB = 7;
     public static final int ShowMatchesByLeagueDB = 8;
 
+    private FirebaseDatabase firebaseDb;
+    private DatabaseReference dbReference;
+    private FirebaseAuth fbAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("errorNetwork", e.getMessage());
         }
+
+        fbAuth = FirebaseAuth.getInstance();
+
+
+        firebaseDb = FirebaseDatabase.getInstance();
     }
 
     public void showMatches(View view) {

@@ -80,13 +80,33 @@ public class ChooseDateActivity extends AppCompatActivity {
 
     public void setDateFrom(View view) {
         int month = datePicker.getMonth() + 1;
-        fromDate = datePicker.getYear() + "-" + month + "-" + datePicker.getDayOfMonth();
+        String monthS = "";
+        if(month < 10) {
+            monthS = "0" + month;
+        } else {
+            monthS = month + "";
+        }
+        if(datePicker.getDayOfMonth() < 10) {
+            fromDate = datePicker.getYear() + "-" + monthS + "-0" + datePicker.getDayOfMonth();
+        } else {
+            fromDate = datePicker.getYear() + "-" + monthS + "-" + datePicker.getDayOfMonth();
+        }
         tvFrom.setText("From date: " + datePicker.getDayOfMonth() + " " + getMonthFullName(datePicker.getMonth()));
     }
 
     public void setDateTo(View view) {
         int month = datePicker.getMonth() + 1;
-        toDate = datePicker.getYear() + "-" + month + "-" + datePicker.getDayOfMonth();
+        String monthS = "";
+        if(month < 10) {
+            monthS = "0" + month;
+        } else {
+            monthS = month + "";
+        }
+        if(datePicker.getDayOfMonth() < 10) {
+            toDate = datePicker.getYear() + "-" + monthS + "-0" + datePicker.getDayOfMonth();
+        } else {
+            toDate = datePicker.getYear() + "-" + monthS + "-" + datePicker.getDayOfMonth();
+        }
         tvTo.setText("To date: " + datePicker.getDayOfMonth() + " " + getMonthFullName(datePicker.getMonth()));
     }
 
