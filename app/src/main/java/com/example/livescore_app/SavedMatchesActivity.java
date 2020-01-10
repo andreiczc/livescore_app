@@ -41,7 +41,7 @@ public class SavedMatchesActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(this);
 
-        if(matches.size() != 0) {
+        if (matches != null && matches.size() != 0) {
             adapter = new MatchAdapter(matches);
         } else {
             TextView tv = new TextView(this);

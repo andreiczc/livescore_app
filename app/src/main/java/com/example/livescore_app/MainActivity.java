@@ -24,8 +24,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -50,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int ShowDB = 6;
     public static final int ClearDB = 7;
     public static final int ShowMatchesByLeagueDB = 8;
+    public static final int BackupToFirebase = 9;
 
-    private FirebaseDatabase firebaseDb;
-    private DatabaseReference dbReference;
+    private FirebaseDatabase fbDatabase;
     private FirebaseAuth fbAuth;
 
     private Button btnAccount;
@@ -67,11 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         database = DatabaseInstance.getDatabaseInstance(this);
 
-        if (savedMatches == null) {
-            //readMatchesPreferences("matches");
-            savedMatches = database.dbDao().getMatches();
-        }
-
         try {
             net = new Network();
             net.execute(new URL("http://api.football-data.org/v2/matches"));
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         fbAuth = FirebaseAuth.getInstance();
+        fbDatabase = FirebaseDatabase.getInstance();
 
         /*fbAuth.createUserWithEmailAndPassword("andrei.cazacu@live.com", "03andrei").addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -142,8 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
                 final EditText tbEmail = loginView.findViewById(R.id.tbEmail);
                 final EditText tbPassword = loginView.findViewById(R.id.tbPassword);
-                Button btnLogin = loginView.findViewById(R.id.btnLogin);
+                final Button btnLogin = loginView.findViewById(R.id.btnLogin);
                 final Button btnDismiss = loginView.findViewById(R.id.btnNoLogin);
+                final Button btnRegister = loginView.findViewById(R.id.btnRegister);
 
                 final AlertDialog dialog = builder.create();
 
@@ -178,6 +180,34 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                btnRegister.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String email = tbEmail.getText().toString();
+                        String password = tbPassword.getText().toString();
+
+                        if (email.contains("@")) {
+                            fbAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    FirebaseUser user = fbAuth.getCurrentUser();
+                                    if (task.isSuccessful()) {
+                                        btnAccount.setText(user.getEmail());
+                                        btnAccount.setOnClickListener(signedIn);
+
+                                        Toast.makeText(getApplicationContext(), "Register successful", Toast.LENGTH_LONG).show();
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Register failed.\nThe email address can not be used in multiple accounts", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Register failed.\nPlease make sure your email has a valid form.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
                 dialog.show();
             }
         };
@@ -189,6 +219,21 @@ public class MainActivity extends AppCompatActivity {
         } else {
             btnAccount.setText(R.string.sign_in);
             btnAccount.setOnClickListener(signIn);
+        }
+
+        if (savedMatches == null) {
+            //readMatchesPreferences("matches");
+            //savedMatches = database.dbDao().getMatches();
+            savedMatches = readMatchesFromFirebase();
+        }
+    }
+
+    private List<Match> readMatchesFromFirebase() {
+        FirebaseUser user = fbAuth.getCurrentUser();
+        if (user != null) {
+            return null;
+        } else {
+            return null;
         }
     }
 
@@ -211,6 +256,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void saveMatchesToFirebase(List<Match> matches) {
+        FirebaseUser user = fbAuth.getCurrentUser();
+        if (user != null) {
+            String key = user.getUid();
+            DatabaseReference reference = fbDatabase.getReference(key);
+            reference.setValue(savedMatches);
+            Toast.makeText(this, "Backup successful", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "You are not logged in", Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, SharedPrefs, 1, "Save matches with shared preferences");
@@ -221,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
         menu.add(0, ClearDB, 6, "Delete all saved matches from db");
         menu.add(0, Text, 7, "Save matches with text file");
         menu.add(0, ShowText, 8, "Show matches with text file");
+        menu.add(0, BackupToFirebase, 9, "Backup to online database");
 
         return true;
     }
@@ -261,6 +319,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case ShowMatchesByLeagueDB:
                 showMatchesByLeagueDb();
+                break;
+            case BackupToFirebase:
+                saveMatchesToFirebase(savedMatches);
                 break;
         }
 
