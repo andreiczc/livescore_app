@@ -35,6 +35,11 @@ public class Match {
 
     private String leagueName;
 
+    @Ignore
+    public Match() {
+
+    }
+
     public Match(String competitionName, String eventDate, boolean finished, String homeTeamName,
                  String awayTeamName, int homeTeamGoals, int awayTeamGoals, String homeTeamCrest, String awayTeamCrest) {
         this.competitionName = competitionName;
@@ -88,7 +93,7 @@ public class Match {
                 "Home team name: " + homeTeamName + '\n' +
                 "Away team name: " + awayTeamName + '\n';
 
-        if(isFinished())
+        if (isFinished())
             res += "Home team goals: " + homeTeamGoals + '\n' +
                     "Away team goals: " + awayTeamGoals + '\n';
 

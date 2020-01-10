@@ -224,16 +224,28 @@ public class MainActivity extends AppCompatActivity {
         if (savedMatches == null) {
             //readMatchesPreferences("matches");
             //savedMatches = database.dbDao().getMatches();
-            savedMatches = readMatchesFromFirebase();
+            readMatchesFromFirebase();
         }
     }
 
-    private List<Match> readMatchesFromFirebase() {
+    private void readMatchesFromFirebase() {
         FirebaseUser user = fbAuth.getCurrentUser();
         if (user != null) {
-            return null;
-        } else {
-            return null;
+            DatabaseReference reference = fbDatabase.getReference(user.getUid());
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    savedMatches = new ArrayList<>();
+                    for(DataSnapshot m : dataSnapshot.getChildren()) {
+                        savedMatches.add(m.getValue(Match.class));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getApplicationContext(), "Failed to load data from Firebase", Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
