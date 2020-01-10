@@ -11,4 +11,8 @@
     <string name="dismiss">Dismiss</string>
     <string name="save_report">Save report</string>
     <string name="modify">Modify</string>
+    <string name="sign_in">Sign in</string>
+    <string name="hint_email">Email Address</string>
+    <string name="hint_pass">Password</string>
+    <string name="login">Login</string>
 </resources>

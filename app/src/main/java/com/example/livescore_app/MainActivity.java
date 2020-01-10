@@ -5,16 +5,23 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -48,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference dbReference;
     private FirebaseAuth fbAuth;
 
+    private Button btnAccount;
+
+    private View.OnClickListener signedIn;
+    private View.OnClickListener signIn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +81,115 @@ public class MainActivity extends AppCompatActivity {
 
         fbAuth = FirebaseAuth.getInstance();
 
+        /*fbAuth.createUserWithEmailAndPassword("andrei.cazacu@live.com", "03andrei").addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "Register succesfull", Toast.LENGTH_LONG).show();
+                    FirebaseUser user = fbAuth.getCurrentUser();
+                } else {
+                    Toast.makeText(MainActivity.this, "Register failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });*/
 
-        firebaseDb = FirebaseDatabase.getInstance();
+        /*fbAuth.signInWithEmailAndPassword("andrei.cazacu@live.com", "03andrei").addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_LONG).show();
+                    FirebaseUser user = fbAuth.getCurrentUser();
+                } else {
+                    Toast.makeText(MainActivity.this, "Login failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });*/
+
+        btnAccount = findViewById(R.id.btnAccount);
+
+        signedIn = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setMessage("Are you sure that you want to sign out ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                fbAuth.signOut();
+                                btnAccount.setText(R.string.sign_in);
+                                btnAccount.setOnClickListener(signIn);
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        };
+
+        signIn = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+                View loginView = inflater.inflate(R.layout.dialog_login, null);
+                builder.setView(loginView)
+                        .setTitle("Login dialog");
+
+                final EditText tbEmail = loginView.findViewById(R.id.tbEmail);
+                final EditText tbPassword = loginView.findViewById(R.id.tbPassword);
+                Button btnLogin = loginView.findViewById(R.id.btnLogin);
+                final Button btnDismiss = loginView.findViewById(R.id.btnNoLogin);
+
+                final AlertDialog dialog = builder.create();
+
+                btnDismiss.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnLogin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String email = tbEmail.getText().toString();
+                        String password = tbPassword.getText().toString();
+
+                        fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                FirebaseUser user = fbAuth.getCurrentUser();
+                                if (user != null) {
+                                    btnAccount.setText(user.getEmail());
+                                    btnAccount.setOnClickListener(signedIn);
+
+                                    Toast.makeText(getApplicationContext(), "Login successful", Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Login failed.\nPlease try to input your email or password again.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                dialog.show();
+            }
+        };
+
+        FirebaseUser user = fbAuth.getCurrentUser();
+        if (user != null) {
+            btnAccount.setText(user.getEmail());
+            btnAccount.setOnClickListener(signedIn);
+        } else {
+            btnAccount.setText(R.string.sign_in);
+            btnAccount.setOnClickListener(signIn);
+        }
     }
 
     public void showMatches(View view) {
