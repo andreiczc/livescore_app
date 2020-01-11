@@ -226,6 +226,16 @@ public class MainActivity extends AppCompatActivity {
             //savedMatches = database.dbDao().getMatches();
             readMatchesFromFirebase();
         }
+
+        Button btnAuthor = findViewById(R.id.btnAuthor);
+        btnAuthor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MapsActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 
     private void readMatchesFromFirebase() {
