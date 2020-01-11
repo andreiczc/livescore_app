@@ -5,10 +5,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,6 +42,7 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener signedIn;
     private View.OnClickListener signIn;
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setView(loginView)
                         .setTitle("Login dialog");
 
+                final ImageView imageView = loginView.findViewById(R.id.imageView);
                 final EditText tbEmail = loginView.findViewById(R.id.tbEmail);
                 final EditText tbPassword = loginView.findViewById(R.id.tbPassword);
                 final Button btnLogin = loginView.findViewById(R.id.btnLogin);
@@ -162,21 +169,23 @@ public class MainActivity extends AppCompatActivity {
                         String email = tbEmail.getText().toString();
                         String password = tbPassword.getText().toString();
 
-                        fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                FirebaseUser user = fbAuth.getCurrentUser();
-                                if (user != null) {
-                                    btnAccount.setText(user.getEmail());
-                                    btnAccount.setOnClickListener(signedIn);
+                        if (email.contains("@")) {
+                            fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    FirebaseUser user = fbAuth.getCurrentUser();
+                                    if (user != null) {
+                                        btnAccount.setText(user.getEmail());
+                                        btnAccount.setOnClickListener(signedIn);
 
-                                    Toast.makeText(getApplicationContext(), "Login successful", Toast.LENGTH_LONG).show();
-                                    dialog.dismiss();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Login failed.\nPlease try to input your email or password again.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Login successful", Toast.LENGTH_LONG).show();
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Login failed.\nPlease try to input your email or password again.", Toast.LENGTH_LONG).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 });
 
@@ -208,7 +217,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                dialog.show();
+                try {
+                    String url = "https://firebase.google.com/downloads/brand-guidelines/PNG/logo-vertical.png";
+                    (new NetworkImage() {
+                        @Override
+                        protected void onPostExecute(Bitmap bitmap) {
+                            imageView.setImageBitmap(bitmap);
+                            dialog.show();
+                        }
+                    }).execute(new URL(url));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -246,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     savedMatches = new ArrayList<>();
-                    for(DataSnapshot m : dataSnapshot.getChildren()) {
+                    for (DataSnapshot m : dataSnapshot.getChildren()) {
                         savedMatches.add(m.getValue(Match.class));
                     }
                 }
