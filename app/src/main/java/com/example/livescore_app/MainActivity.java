@@ -88,30 +88,6 @@ public class MainActivity extends AppCompatActivity {
         fbAuth = FirebaseAuth.getInstance();
         fbDatabase = FirebaseDatabase.getInstance();
 
-        /*fbAuth.createUserWithEmailAndPassword("andrei.cazacu@live.com", "03andrei").addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Register succesfull", Toast.LENGTH_LONG).show();
-                    FirebaseUser user = fbAuth.getCurrentUser();
-                } else {
-                    Toast.makeText(MainActivity.this, "Register failed", Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
-
-        /*fbAuth.signInWithEmailAndPassword("andrei.cazacu@live.com", "03andrei").addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_LONG).show();
-                    FirebaseUser user = fbAuth.getCurrentUser();
-                } else {
-                    Toast.makeText(MainActivity.this, "Login failed", Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
-
         btnAccount = findViewById(R.id.btnAccount);
 
         signedIn = new View.OnClickListener() {
